@@ -4,7 +4,9 @@
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [compojure "1.3.1"]
-                 [ring/ring-defaults "0.1.2"]]
+                 [ring/ring-defaults "0.1.2"]
+                 [http-kit "2.1.11"]
+                 [org.clojure/data.json "0.2.6"]]
   :plugins [[lein-ring "0.8.13"]]
   :ring {:handler twitch-go-dashboard.handler/app}
   :profiles
