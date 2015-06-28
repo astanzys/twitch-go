@@ -1,9 +1,22 @@
-<html lang="en">
-<head>
+<html lang="en" ng-app="goApp">
+<head >
     <meta charset="UTF-8">
-    <title>Twitch go analytics</title>
+    <title>Twitch go thing?</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.1/angular.js"></script>
+
+    <script src="scripts/app.js"></script>
+    <script src="scripts/Controller.js"></script>
+    <script src="scripts/DataService.js"></script>
 </head>
+
 <body>
-<h1>Twitch go analytics</h1>
+<div ng-controller="MainController">
+    <h1>Title goes here</h1>
+    <p>Streamers:</p>
+    <div ng-repeat="streamer in streamers">
+        {{streamer}}
+    </div>
+</div>
 </body>
 </html>
