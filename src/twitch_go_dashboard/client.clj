@@ -27,9 +27,12 @@
 (defn fetch-current-streams []
   (->> (do-get "https://api.twitch.tv/kraken/search/streams" {:headers twitch-headers :query-params {:q "Go (Board Game)"}})
        :streams
-       (map (fn [%]
-            {:viewers (:viewers %)
-             :name (get-in % [:channel :name])
-             :display_name (get-in % [:channel :display_name])
-             :created_at (:created_at %)}))
-       (group-by :name)))
+       (map (fn [stream]
+              (let [data {:viewers (:viewers stream)
+                          :name (get-in stream [:channel :name])
+                          :display_name (get-in stream [:channel :display_name])
+                          :created_at (:created_at stream)
+                          :url (get-in stream [:channel :url])}]
+                [(:name data) data])))
+       flatten
+       (apply hash-map)))

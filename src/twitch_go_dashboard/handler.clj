@@ -26,7 +26,7 @@
 (defn fetch-streamers-from-storage []
   (edn/read-string (slurp "data.txt")))
 
-(defn update-and-cache []
+(defn update-data! []
   (let [current-streamers (twitch-client/fetch-current-streams)]
     (println (str "Currently streaming: " current-streamers))
     (if-not (empty? current-streamers)
@@ -34,10 +34,10 @@
     (println "updating data on file...")
     (spit "data.txt" (prn-str @streamers))))
 
-(defn init []
+(defn init! []
   (println "Initializing")
   (let [streamer-set (fetch-streamers-from-storage)]
     (reset! streamers streamer-set)
     (schedule/every 600000
-                    update-and-cache
+                    update-data!
                     thread-pool)))

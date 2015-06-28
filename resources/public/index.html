@@ -23,7 +23,7 @@
         <div id="streamers">
             <h3>Streamers</h3>
             <div ng-repeat="streamer in streamers">
-                {{streamer.display_name}}
+                <a ng-href="{{streamer.url}}" ng-bind="streamer.display_name"></a>
             </div>
         </div>
         <div id="broadcasts">
