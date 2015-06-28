@@ -1,7 +1,6 @@
 (ns twitch-go-dashboard.client
   (:require [clojure.data.json :as json]
-            [org.httpkit.client :as http])
-  (:import (java.net URLEncoder)))
+            [org.httpkit.client :as http]))
 
 (def twitch-headers
   {"Accept" "application/vnd.twitchtv.v3+json"})
@@ -25,7 +24,13 @@
       (do-get {:headers twitch-headers
                :query-params {:broadcasts "true"}})))
 
-(defn fetch-game-streams [game]
+(defn fetch-game-streams []
   (-> "https://api.twitch.tv/kraken/search/streams"
       (do-get {:headers twitch-headers
-               :query-params {:query (URLEncoder/encode game "UTF-8")}})))
+               :query-params {:q "Go (Board Game)"}})))
+
+(defn fetch-current-streamers []
+  (->> (fetch-game-streams)
+      :streams
+      (map #(get-in % [:channel :name]))
+       set))
