@@ -1,9 +1,13 @@
 <html lang="en" ng-app="goApp">
 <head >
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>Twitch go thing?</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.1/angular.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
 
     <script src="scripts/app.js"></script>
     <script src="scripts/Controller.js"></script>
@@ -12,10 +16,20 @@
 
 <body>
 <div ng-controller="MainController">
-    <h1>Title goes here</h1>
-    <p>Streamers:</p>
-    <div ng-repeat="streamer in streamers">
-        {{streamer.display_name}}
+    <header>
+        <h1>I'll come up with a title soon</h1>
+    </header>
+    <div class="content">
+        <div id="streamers">
+            <h3>Streamers</h3>
+            <div ng-repeat="streamer in streamers">
+                {{streamer.display_name}}
+            </div>
+        </div>
+        <div id="broadcasts">
+            <h3>Broadcasts</h3>
+            <p>Nothing here yet</p>
+        </div>
     </div>
 </div>
 </body>

@@ -1,0 +1,35 @@
+body {
+    max-width: 800px;
+    margin: 40px auto;
+    background-color: #EEEEEE;
+    font-size: 18px;
+    line-height: 1.6;
+    font-family: monospace;
+}
+
+header {
+    text-align: center;
+}
+
+#content {
+    overflow: hidden;
+}
+
+#streamers {
+    width: 50%;
+    float: left;
+}
+
+#streamers h3 {
+    text-align: center
+}
+
+#broadcasts {
+    width: 50%;
+    float: left;
+}
+
+#broadcasts h3 {
+    text-align: center;
+}
+
