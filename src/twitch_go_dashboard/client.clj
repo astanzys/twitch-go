@@ -24,13 +24,12 @@
       (do-get {:headers twitch-headers
                :query-params {:broadcasts "true"}})))
 
-(defn fetch-game-streams []
-  (-> "https://api.twitch.tv/kraken/search/streams"
-      (do-get {:headers twitch-headers
-               :query-params {:q "Go (Board Game)"}})))
-
-(defn fetch-current-streamers []
-  (->> (fetch-game-streams)
-      :streams
-      (map #(get-in % [:channel :name]))
-       set))
+(defn fetch-current-streams []
+  (->> (do-get "https://api.twitch.tv/kraken/search/streams" {:headers twitch-headers :query-params {:q "Go (Board Game)"}})
+       :streams
+       (map (fn [%]
+            {:viewers (:viewers %)
+             :name (get-in % [:channel :name])
+             :display_name (get-in % [:channel :display_name])
+             :created_at (:created_at %)}))
+       (group-by :name)))

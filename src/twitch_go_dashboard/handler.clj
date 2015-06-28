@@ -8,7 +8,7 @@
             [ring.middleware.json :refer [wrap-json-response]]
             [twitch-go-dashboard.client :as twitch-client]))
 
-(def streamers (atom #{}))
+(def streamers (atom {}))
 
 (def thread-pool (schedule/mk-pool))
 
@@ -23,24 +23,14 @@
       wrap-json-response
       (wrap-defaults site-defaults)))
 
-(def map-to-internal
-  (fn [external]
-    (->> external
-         :streams
-         (map (fn [%]
-                {:viewers (:viewers %)
-                 :name (get-in % [:channel :name])
-                 :display_name (get-in % [:channel :display_name])
-                 :created_at (:created_at %)})))))
-
 (defn fetch-streamers-from-storage []
   (edn/read-string (slurp "data.txt")))
 
 (defn update-and-cache []
-  (let [current-streamers (twitch-client/fetch-current-streamers)]
+  (let [current-streamers (twitch-client/fetch-current-streams)]
     (println (str "Currently streaming: " current-streamers))
     (if-not (empty? current-streamers)
-      (swap! streamers clojure.set/union current-streamers))
+      (swap! streamers merge current-streamers))
     (println "updating data on file...")
     (spit "data.txt" (prn-str @streamers))))
 
