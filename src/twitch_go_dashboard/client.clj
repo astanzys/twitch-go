@@ -6,6 +6,7 @@
   {"Accept" "application/vnd.twitchtv.v3+json"})
 
 (defn do-get [url options]
+  (println url)
   (-> url
       (http/get options)
       deref
@@ -19,10 +20,28 @@
   (-> (format-url "https://api.twitch.tv/kraken/channels/%s" name)
       (do-get {:headers twitch-headers})))
 
-(defn fetch-channel-broadcasts [name]
-  (-> (format-url "https://api.twitch.tv/kraken/channels/%s/videos" name)
-      (do-get {:headers twitch-headers
-               :query-params {:broadcasts "true"}})))
+(defn fetch-videos [streamers]
+  (let [map-videos (fn [videos]
+                     (map (fn [video]
+                            {:display_name (get-in video [:channel :display_name])
+                             :name (get-in video [:channel :name])
+                             :url (:url video)
+                             :title (:title video)
+                             :recorded_at (:recorded_at video)}) videos))
+        only-go-videos (fn [videos]
+                         (filter #(= (:game %) "Go (Board Game)") videos))
+        fetch-streamer-videos (fn [streamer]
+                                (-> (format-url "https://api.twitch.tv/kraken/channels/%s/videos" streamer)
+                                    (do-get {:headers twitch-headers :query-params {:broadcasts "true"}})
+                                    :videos
+                                    only-go-videos
+                                    map-videos))]
+    (->> streamers
+         (map fetch-streamer-videos)
+         flatten
+         (sort-by :recorded_at)
+         reverse)))
+
 
 (defn fetch-current-streams []
   (->> (do-get "https://api.twitch.tv/kraken/search/streams" {:headers twitch-headers :query-params {:q "Go (Board Game)"}})
@@ -34,5 +53,5 @@
                           :created_at (:created_at stream)
                           :url (get-in stream [:channel :url])}]
                 [(:name data) data])))
-       flatten
+       flatten                                              ;this be bad
        (apply hash-map)))

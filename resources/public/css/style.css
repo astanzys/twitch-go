@@ -1,5 +1,5 @@
 body {
-    max-width: 800px;
+    max-width: 960px;
     margin: 40px auto;
     background-color: #EEEEEE;
     font-size: 18px;
@@ -16,7 +16,7 @@ header {
 }
 
 #streamers {
-    width: 50%;
+    width: 30%;
     float: left;
 }
 
@@ -24,12 +24,13 @@ header {
     text-align: center
 }
 
-#broadcasts {
-    width: 50%;
+#videos {
+    width: 70%;
     float: left;
+    font-size: 14px;
 }
 
-#broadcasts h3 {
+#videos h3 {
     text-align: center;
 }
 

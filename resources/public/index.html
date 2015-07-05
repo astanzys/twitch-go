@@ -26,9 +26,11 @@
                 <a ng-href="{{streamer.url}}" ng-bind="streamer.display_name"></a>
             </div>
         </div>
-        <div id="broadcasts">
-            <h3>Broadcasts</h3>
-            <p>Nothing here yet</p>
+        <div id="videos">
+            <h3>Latest videos</h3>
+            <div ng-repeat="video in videos">
+                <a ng-href="{{video.url}}">{{video.display_name}} - {{video.title}}</a>
+            </div>
         </div>
     </div>
 </div>
