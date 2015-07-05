@@ -30,7 +30,6 @@
    :videos (:videos new-data)})
 
 (defn update-data! []
-  (println "updating!")
   (let [current-streamers (twitch-client/fetch-current-streams)
         latest-videos (->> @data
                            :streamers

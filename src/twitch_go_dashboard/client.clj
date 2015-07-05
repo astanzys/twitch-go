@@ -6,7 +6,6 @@
   {"Accept" "application/vnd.twitchtv.v3+json"})
 
 (defn do-get [url options]
-  (println url)
   (-> url
       (http/get options)
       deref
@@ -44,7 +43,7 @@
 
 
 (defn fetch-current-streams []
-  (->> (do-get "https://api.twitch.tv/kraken/search/streams" {:headers twitch-headers :query-params {:q "Go (Board Game)"}})
+  (->> (do-get "https://api.twitch.tv/kraken/streams" {:headers twitch-headers :query-params {:game "Go (Board Game)"}})
        :streams
        (map (fn [stream]
               (let [data {:viewers (:viewers stream)
