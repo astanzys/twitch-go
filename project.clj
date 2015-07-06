@@ -8,7 +8,8 @@
                  [org.clojure/data.json "0.2.6"]
                  [liftoff/at-at "1.3.0"]
                  [ring/ring-json "0.3.1"]
-                 [clj-http "1.1.2"]]
+                 [clj-http "1.1.2"]
+                 [com.taoensso/timbre "4.0.2"]]
   :plugins [[lein-ring "0.8.13"]]
   :ring {:handler twitch-go-dashboard.handler/app
          :init twitch-go-dashboard.handler/init!}

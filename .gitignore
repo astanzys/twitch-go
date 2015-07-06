@@ -11,3 +11,4 @@ pom.xml.asc
 .idea
 *.iml
 data.txt
+log.txt

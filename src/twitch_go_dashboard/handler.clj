@@ -6,12 +6,23 @@
             [overtone.at-at :as schedule]
             [clojure.edn :as edn]
             [ring.middleware.json :refer [wrap-json-response]]
-            [twitch-go-dashboard.client :as twitch-client]))
+            [twitch-go-dashboard.client :as twitch-client]
+            [taoensso.timbre :as timbre]
+            [taoensso.timbre.appenders.core :as appenders]))
 
 (defn fetch-data []
   (edn/read-string (slurp "data.txt")))
 
 (def data (atom (fetch-data)))
+
+(defn wrap-exception-handling
+  [handler]
+  (fn [request]
+    (try
+      (handler request)
+      (catch Exception e
+        (timbre/error e)
+        (throw e)))))
 
 (defroutes app-routes
   (GET "/" [] (redirect "index.html"))
@@ -23,6 +34,7 @@
 (def app
   (-> app-routes
       wrap-json-response
+      wrap-exception-handling
       (wrap-defaults site-defaults)))
 
 (defn merge-data [current-data new-data]
@@ -37,13 +49,13 @@
                            twitch-client/fetch-videos
                            (take 20))
         new-data {:streamers current-streamers :videos latest-videos}]
-    (println (str "Currently streaming: " current-streamers))
+    (timbre/debug (str "Currently streaming: " current-streamers))
     (swap! data merge-data new-data)
-    (println "updating data on file...")
     (spit "data.txt" (prn-str @data))))
 
 (defn init! []
-  (println "Initializing")
+  (timbre/merge-config!
+    {:appenders {:spit (appenders/spit-appender {:fname "log.txt"})}})
   (let [pool (schedule/mk-pool)]
     (schedule/every 600000
                     update-data!

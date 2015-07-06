@@ -1,18 +1,17 @@
 (ns twitch-go-dashboard.client
   (:require [clojure.data.json :as json]
-            [clj-http.client :as client]))
+            [clj-http.client :as http]
+            [taoensso.timbre :as timbre]))
 
 (def twitch-headers
   {"Accept" "application/vnd.twitchtv.v3+json"})
 
 (defn do-get [url options]
-  (println url)
+  (timbre/debug url)
   (-> url
-      (client/get options)
+      (http/get options)
       :body
       (json/read-str :key-fn keyword)))
-
-
 
 (defn format-url [url & vars]
   (apply format url vars))
