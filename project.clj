@@ -9,8 +9,11 @@
                  [liftoff/at-at "1.3.0"]
                  [ring/ring-json "0.3.1"]
                  [clj-http "1.1.2"]
-                 [com.taoensso/timbre "4.0.2"]]
+                 [com.taoensso/timbre "4.0.2"]
+                 [ring/ring-jetty-adapter "1.1.5"]]
   :plugins [[lein-ring "0.8.13"]]
+  :main twitch-go-dashboard.handler
+  :aot [twitch-go-dashboard.handler]
   :ring {:handler twitch-go-dashboard.handler/app
          :init twitch-go-dashboard.handler/init!}
   :profiles

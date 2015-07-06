@@ -8,7 +8,10 @@
             [ring.middleware.json :refer [wrap-json-response]]
             [twitch-go-dashboard.client :as twitch-client]
             [taoensso.timbre :as timbre]
-            [taoensso.timbre.appenders.core :as appenders]))
+            [taoensso.timbre.appenders.core :as appenders]
+            [ring.adapter.jetty :refer [run-jetty]]
+            [clojure.java.io :as io])
+  (:gen-class))
 
 (defn fetch-data []
   (edn/read-string (slurp "data.txt")))
@@ -54,9 +57,17 @@
     (spit "data.txt" (prn-str @data))))
 
 (defn init! []
+  (if-not (.exists (io/as-file "data.txt"))
+    (spit "data.txt" ""))
   (timbre/merge-config!
     {:appenders {:spit (appenders/spit-appender {:fname "log.txt"})}})
   (let [pool (schedule/mk-pool)]
     (schedule/every 600000
                     update-data!
                     pool)))
+
+(defn -main []
+  (init!)
+  (run-jetty app {:port (if (nil? (System/getenv "PORT"))
+                             3000
+                             (Integer/parseInt (System/getenv "PORT")))}) )
