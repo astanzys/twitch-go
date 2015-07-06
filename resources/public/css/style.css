@@ -34,3 +34,13 @@ header {
     text-align: center;
 }
 
+footer {
+    float: right;
+    margin-top: 50px;
+    font-size: 14px;
+}
+
+footer a {
+    color: black;
+}
+
