@@ -50,7 +50,7 @@
                            :streamers
                            keys
                            twitch-client/fetch-videos
-                           (take 20))
+                           (take 30))
         new-data {:streamers current-streamers :videos latest-videos}]
     (timbre/debug (str "Currently streaming: " current-streamers))
     (swap! data merge-data new-data)
