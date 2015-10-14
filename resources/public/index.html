@@ -6,7 +6,7 @@
     <title>Twitch go thing?</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.1/angular.js"></script>
-<!--    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
 
     <script src="scripts/app.js"></script>
@@ -15,17 +15,18 @@
 </head>
 
 <body>
-<div ng-controller="MainController">
+<div ng-controller="MainController as main">
     <div class="content">
         <div id="streamers">
             <h3>Streamers</h3>
-            <div ng-repeat="streamer in streamers">
+            <div ng-repeat="streamer in main.streamers">
                 <a ng-href="{{streamer.url}}" ng-bind="streamer.display_name"></a>
+                <span ng-if="streamer.live" class="label label-success">Live!</span>
             </div>
         </div>
         <div id="videos">
             <h3>Latest videos</h3>
-            <div ng-repeat="video in videos">
+            <div ng-repeat="video in main.videos">
                 <a ng-href="{{video.url}}">{{video.display_name}} - {{video.title}}</a>
             </div>
         </div>

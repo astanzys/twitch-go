@@ -40,20 +40,33 @@
       wrap-exception-handling
       (wrap-defaults site-defaults)))
 
-(defn merge-data [current-data new-data]
-  {:streamers (merge (:streamers current-data) (:streamers new-data))
-   :videos (:videos new-data)})
+(defn map-by-name [streams]
+  (->> streams
+       (map #(vector (:name %) %))
+       flatten
+       (apply hash-map)))
 
 (defn update-data! []
-  (let [current-streamers (twitch-client/fetch-current-streams)
+  (let [old-data @data
+        current-streamers (->> (twitch-client/fetch-live-streams)
+                               (map #(assoc % :live true)))
+
+        old-streamers (->> old-data
+                           :streamers
+                           (map #(assoc % :live false)))
+
         latest-videos (->> @data
                            :streamers
-                           keys
+                           (map :name)
                            twitch-client/fetch-videos
                            (take 30))
-        new-data {:streamers current-streamers :videos latest-videos}]
+        new-data {:streamers (vals                          ; temporarily convert streamer lists into maps for an easy merge
+                               (merge
+                                 (map-by-name old-streamers)
+                                 (map-by-name current-streamers)))
+                  :videos latest-videos}]
     (timbre/debug (str "Currently streaming: " current-streamers))
-    (swap! data merge-data new-data)
+    (reset! data new-data)
     (spit "data.txt" (prn-str @data))))
 
 (defn init! []

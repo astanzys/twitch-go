@@ -43,15 +43,14 @@
          reverse)))
 
 
-(defn fetch-current-streams []
-  (->> (do-get "https://api.twitch.tv/kraken/streams" {:headers twitch-headers :query-params {:game "Go (Board Game)"}})
+(defn fetch-live-streams []
+  (->> (do-get "https://api.twitch.tv/kraken/streams"
+               {:headers twitch-headers
+                :query-params {:game "Go (Board Game)"}})
        :streams
        (map (fn [stream]
-              (let [data {:viewers (:viewers stream)
-                          :name (get-in stream [:channel :name])
-                          :display_name (get-in stream [:channel :display_name])
-                          :created_at (:created_at stream)
-                          :url (get-in stream [:channel :url])}]
-                [(:name data) data])))
-       flatten                                              ;this be bad
-       (apply hash-map)))
+              {:viewers (:viewers stream)
+               :name (get-in stream [:channel :name])
+               :display_name (get-in stream [:channel :display_name])
+               :created_at (:created_at stream)
+               :url (get-in stream [:channel :url])}))))
