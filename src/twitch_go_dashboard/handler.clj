@@ -3,20 +3,12 @@
             [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.util.response :refer [redirect response]]
-            [overtone.at-at :as schedule]
-            [clojure.edn :as edn]
             [ring.middleware.json :refer [wrap-json-response]]
-            [twitch-go-dashboard.client :as twitch-client]
+            [twitch-go-dashboard.service :as service]
             [taoensso.timbre :as timbre]
             [taoensso.timbre.appenders.core :as appenders]
-            [ring.adapter.jetty :refer [run-jetty]]
-            [clojure.java.io :as io])
+            [ring.adapter.jetty :refer [run-jetty]])
   (:gen-class))
-
-(defn fetch-data []
-  (edn/read-string (slurp "data.txt")))
-
-(def data (atom (fetch-data)))
 
 (defn wrap-exception-handling
   [handler]
@@ -29,8 +21,8 @@
 
 (defroutes app-routes
   (GET "/" [] (redirect "index.html"))
-  (GET "/api/streamers" [] (response (:streamers @data)))
-  (GET "/api/videos/latest" [] (response (:videos @data)))
+  (GET "/api/streamers" [] (response (service/get-streamers)))
+  (GET "/api/videos/latest" [] (response (service/get-videos)))
   (route/resources "/")
   (route/not-found "<h1>Page not found</h1>"))
 
@@ -40,44 +32,10 @@
       wrap-exception-handling
       (wrap-defaults site-defaults)))
 
-(defn map-by-name [streams]
-  (->> streams
-       (map #(vector (:name %) %))
-       flatten
-       (apply hash-map)))
-
-(defn update-data! []
-  (let [old-data @data
-        current-streamers (->> (twitch-client/fetch-live-streams)
-                               (map #(assoc % :live true)))
-
-        old-streamers (->> old-data
-                           :streamers
-                           (map #(assoc % :live false)))
-
-        latest-videos (->> @data
-                           :streamers
-                           (map :name)
-                           twitch-client/fetch-videos
-                           (take 30))
-        new-data {:streamers (vals                          ; temporarily convert streamer lists into maps for an easy merge
-                               (merge
-                                 (map-by-name old-streamers)
-                                 (map-by-name current-streamers)))
-                  :videos latest-videos}]
-    (timbre/debug (str "Currently streaming: " current-streamers))
-    (reset! data new-data)
-    (spit "data.txt" (prn-str @data))))
-
 (defn init! []
-  (if-not (.exists (io/as-file "data.txt"))
-    (spit "data.txt" ""))
   (timbre/merge-config!
     {:appenders {:spit (appenders/spit-appender {:fname "log.txt"})}})
-  (let [pool (schedule/mk-pool)]
-    (schedule/every 600000
-                    update-data!
-                    pool)))
+  (service/start-monitoring! 600000))
 
 (defn -main []
   (init!)
