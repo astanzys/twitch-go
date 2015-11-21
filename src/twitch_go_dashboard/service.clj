@@ -1,5 +1,5 @@
 (ns twitch-go-dashboard.service
-  (:require [overtone.at-at :as service]
+  (:require [overtone.at-at :as scheduler]
             [clojure.java.io :as io]
             [taoensso.timbre :as timbre]
             [twitch-go-dashboard.client :as twitch-client]
@@ -33,16 +33,17 @@
                            :streamers
                            (map #(assoc % :live false)))
 
-        latest-videos (->> @data
-                           :streamers
+        all-streamers (vals                          ; temporarily convert streamer lists into maps for an easy merge
+                        (merge
+                          (map-by-name old-streamers)
+                          (map-by-name current-streamers)))
+
+        latest-videos (->> all-streamers
                            (map :name)
                            twitch-client/fetch-videos
                            (take 30))
 
-        new-data {:streamers (vals                          ; temporarily convert streamer lists into maps for an easy merge
-                               (merge
-                                 (map-by-name old-streamers)
-                                 (map-by-name current-streamers)))
+        new-data {:streamers all-streamers
                   :videos latest-videos}]
 
     (timbre/debug (str "Currently streaming: " (pr-str current-streamers)))
@@ -52,10 +53,10 @@
 (defn start-monitoring! [interval]
   (if-not (.exists (io/as-file "data.txt"))
     (spit "data.txt" {:streamers [] :videos []}))
-  (let [pool (service/mk-pool)]
-    (service/every interval
-                    (with-logging update-data!)
-                    pool)))
+  (let [pool (scheduler/mk-pool)]
+    (scheduler/every interval
+                     (with-logging update-data!)
+                     pool)))
 
 (defn get-streamers []
   (:streamers @data))
