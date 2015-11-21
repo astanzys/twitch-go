@@ -16,10 +16,6 @@
 (defn format-url [url & vars]
   (apply format url vars))
 
-(defn fetch-channel [name]
-  (-> (format-url "https://api.twitch.tv/kraken/channels/%s" name)
-      (do-get {:headers twitch-headers})))
-
 (defn fetch-videos [streamers]
   (let [map-videos (fn [videos]
                      (map (fn [video]

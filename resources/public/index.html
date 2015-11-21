@@ -15,25 +15,25 @@
 </head>
 
 <body>
-<div ng-controller="MainController as main">
+<div ng-controller="Controller as ctrl">
     <div class="content">
         <div id="streamers">
             <h3>Streamers</h3>
-            <div ng-repeat="streamer in main.streamers">
+            <div ng-repeat="streamer in ctrl.streamers">
                 <a ng-href="{{streamer.url}}" ng-bind="streamer.display_name"></a>
                 <span ng-if="streamer.live" class="label label-success">Live!</span>
             </div>
         </div>
         <div id="videos">
-            <h3>Latest videos</h3>
-            <div ng-repeat="video in main.videos">
+            <h3>Videos</h3>
+            <div ng-repeat="video in ctrl.videos">
                 <a ng-href="{{video.url}}">{{video.display_name}} - {{video.title}}</a>
             </div>
         </div>
     </div>
-    <footer>
-        <a href="about.html">About</a>
-    </footer>
+</div>
+<div class="footer">
+    <a href="about.html">About</a>
 </div>
 </body>
 </html>

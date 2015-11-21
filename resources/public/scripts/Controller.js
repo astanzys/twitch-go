@@ -1,4 +1,4 @@
-app.controller("MainController", ['DataService', function(DataService) {
+app.controller("Controller", ['DataService', function(DataService) {
     var vm = this;
     var DATE_FAR_IN_FUTURE = new Date(2100, 0, 0);
 

@@ -11,10 +11,6 @@ header {
     text-align: center;
 }
 
-#content {
-    overflow: hidden;
-}
-
 #streamers {
     width: 30%;
     float: left;
@@ -37,13 +33,15 @@ header {
     text-align: center;
 }
 
-footer {
+.footer {
+    clear: left;
     float: right;
+    margin-bottom: 50px;
     margin-top: 50px;
     font-size: 14px;
 }
 
-footer a {
+.footer a {
     color: black;
 }
 
